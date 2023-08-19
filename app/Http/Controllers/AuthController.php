@@ -55,12 +55,24 @@ class AuthController extends Controller
                 'error' => 'The provided credentials are not correct'
             ], 422);
         }
+        /** @var User $user */
         $user = Auth::user();
         $token = $user->createToken('main')->plainTextToken;
 
         return response([
             'user' => $user,
             'token' => $token,
+        ]);
+    }
+
+    public function logout ()
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        // revoke the token that was used to authenticate the current request
+        $user->currentAccessToken()->delete();
+        return response([
+            'success' => true,
         ]);
     }
 }
