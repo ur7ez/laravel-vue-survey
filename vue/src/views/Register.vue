@@ -61,6 +61,7 @@
 import {LockClosedIcon} from "@heroicons/vue/24/solid"
 import store from "../store/index.js";
 import {useRouter} from "vue-router";
+import {ref} from "vue";
 
 const router = useRouter();
 const user = {
@@ -69,15 +70,20 @@ const user = {
   password: '',
   password_confirmation: '',
 };
+const errors = ref({});
 
 function register(ev) {
   ev.preventDefault();
   store
     .dispatch('register', user)
-    .then((res) => {
+    .then(() => {
       router.push({
         name: 'Dashboard',
-      })
-    })
+      });
+    }).catch((error) => {
+    if (error.response.status === 422) {
+      errors.value = error.response.data.errors;
+    }
+  });
 }
 </script>
