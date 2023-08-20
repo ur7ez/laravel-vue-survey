@@ -13,13 +13,13 @@
         <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
           <!-- Image -->
           <div>
-            <label class="block text-sm font-medium text-gray-700">
+            <label for="survey_image" class="block text-sm font-medium text-gray-700">
               Image
             </label>
             <div class="mt-1 flex items-center">
               <img
-                v-if="model.image"
-                :src="model.image"
+                v-if="model.image_url"
+                :src="model.image_url"
                 :alt="model.title"
                 class="w-64 h-48 object-cover"
               />
@@ -36,7 +36,9 @@
               </span>
               <button type="button"
                       class="relative overflow-hidden ml-5 bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-fray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                <input type="file" class="absolute left-0 top-0 right-0 bottom-0 opacity-0 cursor-pointer"/>
+                <input type="file" id="survey_image"
+                       @change="onImageChoose"
+                       class="absolute left-0 top-0 right-0 bottom-0 opacity-0 cursor-pointer"/>
                 Change
               </button>
             </div>
@@ -136,28 +138,50 @@
 <script setup>
 import PageComponent from "../components/PageComponent.vue";
 import QuestionEditor from "../components/editor/QuestionEditor.vue";
-import {ref} from "vue";
-import {useRoute} from "vue-router";
-import {v4 as uuidv4} from "uuid";
+
 import store from "../store/index.js";
+import {ref, watch} from "vue";
+import {useRoute, useRouter} from "vue-router";
+import {v4 as uuidv4} from "uuid";
 
 const route = useRoute();
+const router = useRouter();
 
 // create empty survey
 let model = ref({
   title: "",
   status: false,
   description: null,
-  image: null,
+  image_url: null,
   expire_date: null,
   questions: [],
 });
 
-// If the current component is rendered on survey update route, we make a request to fetch survey
+// watch to current survey data change and when this happens we update local model variable
+watch(
+  () => store.state.currentSurvey.data,
+  (newVal, oldVal) => {
+    model.value = {
+      ...JSON.parse(JSON.stringify(newVal)),
+      status: newVal.status !== 'draft',
+    }
+  }
+)
+
 if (route.params.id) {
-  model.value = store.state.surveys.find(
-    (s) => s.id === parseInt(route.params.id)
-  );
+  store.dispatch('getSurvey', route.params.id);
+}
+
+function onImageChoose(ev) {
+  const file = ev.target.files[0];
+  const  reader = new FileReader();
+  reader.onload = () => {
+    // the field to send on backend and apply validations
+    model.value.image = reader.result;
+    // the field to display on site
+    model.value.image_url = reader.result;
+  };
+  reader.readAsDataURL(file);
 }
 
 function addQuestion(index) {
@@ -190,6 +214,18 @@ function questionChange(question) {
   });
 }
 
+/**
+ * Create or update Survey
+ */
+function saveSurvey() {
+  store.dispatch("saveSurvey", model.value)
+    .then(({ data }) => {
+      router.push({
+        name: "SurveyView",
+        params: { id: data.data.id },
+      });
+    });
+}
 
 </script>
 
