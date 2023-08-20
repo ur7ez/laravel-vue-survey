@@ -95,7 +95,6 @@
         <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
           <h3 class="text-2xl font-semibold flex items-center justify-between">
             Questions
-
             <!-- Add new question -->
             <button type="button" @click="addQuestion()"
                     class="flex flex-center text-sm py-1 px-4 rounded-sm text-white bg-gray-600 hover:bg-gray-700">
@@ -116,7 +115,7 @@
             <QuestionEditor
               :question="question"
               :index="index"
-              @click="questionChange"
+              @change="questionChange"
               @addQuestion="addQuestion"
               @deleteQuestion="deleteQuestion"
             />
@@ -136,12 +135,14 @@
 
 <script setup>
 import PageComponent from "../components/PageComponent.vue";
+import QuestionEditor from "../components/editor/QuestionEditor.vue";
 import {ref} from "vue";
 import {useRoute} from "vue-router";
+import {v4 as uuidv4} from "uuid";
 import store from "../store/index.js";
-import QuestionEditor from "../components/editor/QuestionEditor.vue";
 
 const route = useRoute();
+
 // create empty survey
 let model = ref({
   title: "",
@@ -152,11 +153,44 @@ let model = ref({
   questions: [],
 });
 
+// If the current component is rendered on survey update route, we make a request to fetch survey
 if (route.params.id) {
   model.value = store.state.surveys.find(
     (s) => s.id === parseInt(route.params.id)
   );
 }
+
+function addQuestion(index) {
+  const newQuestion = {
+    id: uuidv4(),
+    type: "text",
+    question: "",
+    description: null,
+    data: {},
+  };
+  model.value.questions.splice(index, 0, newQuestion);
+}
+
+function deleteQuestion(question) {
+  model.value.questions = model.value.questions.filter(
+    (q) => q !== question
+  );
+}
+
+function questionChange(question) {
+  // Important to explicitly assign question.data.options, because otherwise it is a Proxy object, and it is lost in JSON.stringify()
+  if (question.data.options) {
+    question.data.options = [...question.data.options];
+  }
+  model.value.questions = model.value.questions.map((q) => {
+    if (q.id === question.id) {
+      return JSON.parse(JSON.stringify(question));
+    }
+    return q;
+  });
+}
+
+
 </script>
 
 <style></style>
