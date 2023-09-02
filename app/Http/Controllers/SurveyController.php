@@ -19,7 +19,7 @@ class SurveyController extends Controller
     {
         $user = $request->user();
         return SurveyResource::collection(Survey::where('user_id', $user->id)
-            ->paginate());
+            ->paginate(5));
     }
 
     /**
@@ -40,7 +40,7 @@ class SurveyController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Survey $survey, Request $request)
+    public function show(Survey $survey, Request $request): SurveyResource
     {
         $user = $request->user();
         if ($user->id !== $survey->user_id) {
