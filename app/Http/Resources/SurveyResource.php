@@ -6,6 +6,18 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\URL;
 
+/**
+* @property int $id
+* @property string $image
+* @property string $title
+* @property string $slug
+* @property bool $status
+* @property string $description
+* @property string $created_at
+* @property string $updated_at
+* @property string $expire_date
+* @property array $questions
+ */
 class SurveyResource extends JsonResource
 {
     /**
@@ -25,7 +37,7 @@ class SurveyResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'expire_date' => $this->expire_date,
-            'questions' => [],
+            'questions' => SurveyQuestionResource::collection($this->questions),
         ];
     }
 }
