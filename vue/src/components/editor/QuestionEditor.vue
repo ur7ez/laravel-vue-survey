@@ -38,7 +38,7 @@
              class="block text-sm font-medium text-gray-700">
         Question Text
       </label>
-      <input type="text"
+      <input type="text" required
              :name="'question_text_' + model.id"
              v-model="model.question"
              @change="dataChange"
@@ -49,11 +49,11 @@
     <!-- / Question -->
     <!-- Question type -->
     <div class="mt-3 col-span-3">
-      <label for="question_type"
+      <label :for="'question_type' + model.id"
              class="block text-sm font-medium text-gray-700">
         Select Question Type
       </label>
-      <select id="question_type" name="question_type"
+      <select :id="'question_type' + model.id" name="question_type"
               v-model="model.type"
               @change="typeChange"
               class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm">
@@ -101,19 +101,17 @@
       </h4>
 
       <div
-        v-if="!model.data.options.length"
-        class="text-xs text-gray-600 text-center py-3"
-      >
+        v-if="!model.data.options || !model.data.options.length"
+        class="text-xs text-gray-600 text-center py-3">
         You don't have any options defined
       </div>
       <!-- Options list -->
       <div
         v-for="(option, index) in model.data.options" :key="option.uuid"
-        class="flex items-center mb-1"
-      >
+        class="flex items-center mb-1">
         <span class="w-6 text-sm">{{ index + 1 }}. </span>
         <input
-          type="text"
+          type="text" name="option_text"
           v-model="option.text"
           @change="dataChange"
           class="w-full rounded-sm py-1 px-2 text-xs border border-gray-300 focus:border-indigo-500"
@@ -149,7 +147,7 @@ const props = defineProps({
   index: Number,
 });
 
-const emit = defineEmits(["change", "addQuestion", "deleteQuestion"]);
+const emit = defineEmits(["changeQuestion", "addQuestion", "deleteQuestion"]);
 
 // re-create the whole question data to avoid unintentional reference change
 const model = ref(JSON.parse(JSON.stringify(props.question)));
@@ -166,7 +164,7 @@ function shouldHaveOptions() {
 }
 
 function getOptions() {
-  return model.value.data.options;
+  return model.value.data.options || [];
 }
 
 function setOptions(options) {
@@ -190,18 +188,18 @@ function removeOption(op) {
 
 function typeChange() {
   if (shouldHaveOptions()) {
-    setOptions(getOptions() || []);
+    setOptions(getOptions());
   }
   dataChange();
 }
 
 // Emit the data change
 function dataChange() {
-  const data = JSON.parse(JSON.stringify(model.value));
+  const data = model.value;  // JSON.parse(JSON.stringify(model.value))
   if (!shouldHaveOptions()) {
     delete data.data.options;
   }
-  emit("change", data)
+  emit("changeQuestion", data);
 }
 
 function addQuestion() {

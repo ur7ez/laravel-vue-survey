@@ -132,7 +132,7 @@
             <QuestionEditor
               :question="question"
               :index="index"
-              @change="questionChange"
+              @changeQuestion="questionChange"
               @addQuestion="addQuestion"
               @deleteQuestion="deleteQuestion"
             />
@@ -167,8 +167,10 @@ const surveyLoading = computed(() => store.state.currentSurvey.loading);
 // create empty survey
 let model = ref({
   title: "",
+  slug: "",
   status: false,
   description: null,
+  image: null,
   image_url: null,
   expire_date: null,
   questions: [],
@@ -191,6 +193,7 @@ if (route.params.id) {
 
 function onImageChoose(ev) {
   const file = ev.target.files[0];
+  if (!file) return;
   const reader = new FileReader();
   reader.onload = () => {
     // the field to send on backend and apply validations
@@ -220,12 +223,12 @@ function deleteQuestion(question) {
 
 function questionChange(question) {
   // Important to explicitly assign question.data.options, because otherwise it is a Proxy object, and it is lost in JSON.stringify()
-  if (question.data.options) {
-    question.data.options = [...question.data.options];
-  }
+  // if (question.data.options && question.data.options.length) {
+  //   question.data.options = [...question.data.options];
+  // }
   model.value.questions = model.value.questions.map((q) => {
     if (q.id === question.id) {
-      return JSON.parse(JSON.stringify(question));
+      return question;  // JSON.parse(JSON.stringify(question));
     }
     return q;
   });
@@ -258,6 +261,7 @@ function deleteSurvey() {
       });
   }
 }
+
 </script>
 
 <style></style>
