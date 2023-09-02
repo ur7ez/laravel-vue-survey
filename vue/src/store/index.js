@@ -213,6 +213,20 @@ const store = createStore({
           return res;
         });
     },
+    getSurveyBySlug({commit}, slug) {
+      commit('setSurveysLoading', true);
+      return axiosClient
+        .get(`/survey-by-slug/${slug}`)
+        .then((res) => {
+          commit("setCurrentSurveyLoading", false);
+          commit("setCurrentSurvey", res.data);
+          return res;
+        })
+        .catch(err => {
+          commit("setCurrentSurveyLoading", false);
+          throw err;
+        });
+    },
 
     register({commit}, user) {
       return axiosClient.post('/register', user)

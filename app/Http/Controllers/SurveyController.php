@@ -50,6 +50,14 @@ class SurveyController extends Controller
     }
 
     /**
+     * Display the survey for guests.
+     */
+    public function showForGuest(Survey $survey): SurveyResource
+    {
+        return new SurveyResource($survey);
+    }
+
+    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateSurveyRequest $request, Survey $survey)
@@ -90,6 +98,11 @@ class SurveyController extends Controller
         return response('', 204);
     }
 
+    /**
+     * @param string $image
+     * @return string
+     * @throws \Exception
+     */
     private function saveImage(string $image): string
     {
         if (preg_match('/^data:image\/(\w+);base64,/', $image, $type)) {
