@@ -64,10 +64,10 @@ const tmpSurveys = [
         description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda cumque earum eos esse est ex facilis, iure laboriosam maiores neque nesciunt nulla placeat praesentium quae quos ratione, recusandae totam velit!',
         data: {
           options: [
-            {uuid: '31132230-29e0-4857-84ed-417542c7c8dd', text: 'Laravel 5'},
-            {uuid: '0ab85f86-15ee-4ec0-ba42-793daf243a5d', text: 'Laravel 6'},
-            {uuid: '748fd679-d983-4d73-8d7b-7bb4abd22254', text: 'Laravel 7'},
-            {uuid: 'f1864724-1009-4bed-94a1-3cfe93dfb82a', text: 'Laravel 8'},
+            {uuid: '31132230-29e0-4857-84ed-417542c7c8dd', text: 'Laravel 7'},
+            {uuid: '0ab85f86-15ee-4ec0-ba42-793daf243a5d', text: 'Laravel 8'},
+            {uuid: '748fd679-d983-4d73-8d7b-7bb4abd22254', text: 'Laravel 9'},
+            {uuid: 'f1864724-1009-4bed-94a1-3cfe93dfb82a', text: 'Laravel 10'},
           ]
         },
       },
