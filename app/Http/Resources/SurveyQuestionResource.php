@@ -5,6 +5,14 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @property int $id
+ * @property int $survey_id
+ * @property string $type
+ * @property string $question
+ * @property string $description
+ * @property string $data
+ */
 class SurveyQuestionResource extends JsonResource
 {
     /**
