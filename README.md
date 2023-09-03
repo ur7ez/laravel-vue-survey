@@ -17,7 +17,7 @@ Built with these technologies following this [YouTube Video](https://youtu.be/WL
 
 
 ## Requirements
-You need to have PHP version **8.0** or above. Node.js version **12.0** or above.
+You need to have PHP version **8.0** or above. Node.js version **14.18** or above.
 
 
 ## Installation
